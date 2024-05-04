@@ -1,32 +1,35 @@
-name: Deploy to GitHub Pages
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   deploy:
-    runs-on: ubuntu-latest
     defaults:
-          run:
-            working-directory: website
+      run:
+        working-directory: website
+    runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            website
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          cache: yarn
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-      - name: Build website
-        run: yarn build
-      - name: Deploy to GitHub Pages 
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./website/build
-          keep_files: true
+    - continue-on-error: true
+      uses: actions/checkout@v4
+      with:
+        sparse-checkout: 'website
+
+          '
+    - continue-on-error: true
+      uses: actions/setup-node@v3
+      with:
+        cache: yarn
+        node-version: 18
+    - continue-on-error: true
+      name: Install dependencies
+      run: yarn install --frozen-lockfile
+    - continue-on-error: true
+      name: Build website
+      run: yarn build
+    - continue-on-error: true
+      name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        keep_files: true
+        publish_dir: ./website/build
+name: Deploy to GitHub Pages
+on:
+  repository_dispatch:
+    types: trigger-ga___docs.yml
